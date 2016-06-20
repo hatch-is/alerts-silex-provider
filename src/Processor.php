@@ -27,6 +27,21 @@ class Processor
         $this->endpoint = $endpoint;
     }
 
+    public function getAlerts()
+    {
+
+    }
+
+    public function markAlertsAsRead()
+    {
+
+    }
+
+    public function getSegmentationCount($segmentation)
+    {
+        
+    }
+
     protected function getPath($path)
     {
         return $this->endpoint . $path;
