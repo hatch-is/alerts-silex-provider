@@ -61,7 +61,7 @@ class Processor
         $client = new GuzzleClient();
         $request = new Request(
             'post',
-            $this->getPath('/segmentation'),
+            $this->getPath('/segments/count'),
             [],
             json_encode($segmentation)
         );
