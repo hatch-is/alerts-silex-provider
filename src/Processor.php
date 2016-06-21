@@ -29,17 +29,44 @@ class Processor
 
     public function getAlerts()
     {
-
+        $client = new GuzzleClient();
+        $request = new Request(
+            'get',
+            $this->getPath('/alerts')
+        );
+        $response = $this->send($client, $request);
+        return json_decode($response->getContents());
     }
 
-    public function markAlertsAsRead()
+    public function markAlertsAsRead($alerts, $userId)
     {
-
+        $client = new GuzzleClient();
+        $request = new Request(
+            'post',
+            $this->getPath('/alerts/read'),
+            [],
+            json_encode(
+                [
+                    'alerts' => $alerts,
+                    'user'   => $userId
+                ]
+            )
+        );
+        $response = $this->send($client, $request);
+        return json_decode($response->getContents());
     }
 
     public function getSegmentationCount($segmentation)
     {
-        
+        $client = new GuzzleClient();
+        $request = new Request(
+            'post',
+            $this->getPath('/segmentation'),
+            [],
+            json_encode($segmentation)
+        );
+        $response = $this->send($client, $request);
+        return json_decode($response->getContents());
     }
 
     protected function getPath($path)
