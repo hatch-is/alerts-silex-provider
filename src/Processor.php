@@ -44,7 +44,7 @@ class Processor
         $request = new Request(
             'post',
             $this->getPath('/alerts/read'),
-            [],
+            ['content-type' => 'application/json'],
             json_encode(
                 [
                     'alerts' => $alerts,
@@ -62,7 +62,7 @@ class Processor
         $request = new Request(
             'post',
             $this->getPath('/segments/count'),
-            [],
+            ['content-type' => 'application/json'],
             json_encode($segmentation)
         );
         $response = $this->send($client, $request);
