@@ -38,6 +38,37 @@ class Processor
         return json_decode($response->getContents());
     }
 
+    public function getById($id)
+    {
+        $client = new GuzzleClient();
+        $request = new Request(
+            'get',
+            $this->getPath(
+                sprintf('/alerts/%s', $id)
+            )
+        );
+        $response = $this->send($client, $request);
+        return json_decode($response->getContents());
+    }
+
+    public function markAlertsAsReadByDateTime($dateTime, $userId)
+    {
+        $client = new GuzzleClient();
+        $request = new Request(
+            'post',
+            $this->getPath('/alerts/read/date'),
+            ['content-type' => 'application/json'],
+            json_encode(
+                [
+                    'dateTime' => $dateTime,
+                    'user' => $userId
+                ]
+            )
+        );
+        $response = $this->send($client, $request);
+        return json_decode($response->getContents());
+    }
+
     public function markAlertsAsRead($alerts, $userId)
     {
         $client = new GuzzleClient();
