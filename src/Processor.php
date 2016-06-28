@@ -51,6 +51,19 @@ class Processor
         return json_decode($response->getContents());
     }
 
+    public function getUnread($userId)
+    {
+        $client = new GuzzleClient();
+        $request = new Request(
+            'get',
+            $this->getPath(
+                sprintf('/alerts/unread?user=', $userId)
+            )
+        );
+        $response = $this->send($client, $request);
+        return json_decode($response->getContents());
+    }
+
     public function markAlertsAsReadByDateTime($dateTime, $userId)
     {
         $client = new GuzzleClient();
