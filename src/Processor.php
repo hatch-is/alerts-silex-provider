@@ -27,12 +27,14 @@ class Processor
         $this->endpoint = $endpoint;
     }
 
-    public function getAlerts()
+    public function getAlerts($userId)
     {
         $client = new GuzzleClient();
         $request = new Request(
             'get',
-            $this->getPath('/alerts')
+            $this->getPath(
+                sprintf('/alerts?user=%s', $userId)
+            )
         );
         $response = $this->send($client, $request);
         return json_decode($response->getContents());
@@ -74,7 +76,7 @@ class Processor
             json_encode(
                 [
                     'dateTime' => $dateTime,
-                    'user' => $userId
+                    'user'     => $userId
                 ]
             )
         );
