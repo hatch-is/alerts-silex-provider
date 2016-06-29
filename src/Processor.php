@@ -57,7 +57,7 @@ class Processor
         $request = new Request(
             'get',
             $this->getPath(
-                sprintf('/alerts/unread?user=', $userId)
+                sprintf('/alerts/unread?user=%s', $userId)
             )
         );
         $response = $this->send($client, $request);
