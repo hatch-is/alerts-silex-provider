@@ -37,7 +37,7 @@ class Processor
             )
         );
         $response = $this->send($client, $request);
-        return json_decode($response->getContents());
+        return $response;
     }
 
     public function getById($id)
@@ -50,7 +50,7 @@ class Processor
             )
         );
         $response = $this->send($client, $request);
-        return json_decode($response->getContents());
+        return $response;
     }
 
     public function getUnread($userId)
@@ -63,7 +63,7 @@ class Processor
             )
         );
         $response = $this->send($client, $request);
-        return json_decode($response->getContents());
+        return $response;
     }
 
     public function markAlertsAsReadByDateTime($dateTime, $userId)
@@ -81,7 +81,7 @@ class Processor
             )
         );
         $response = $this->send($client, $request);
-        return json_decode($response->getContents());
+        return $response;
     }
 
     public function markAlertsAsRead($alerts, $userId)
@@ -99,7 +99,7 @@ class Processor
             )
         );
         $response = $this->send($client, $request);
-        return json_decode($response->getContents());
+        return $response;
     }
 
     public function getSegmentationCount($segmentation)
@@ -112,7 +112,7 @@ class Processor
             json_encode($segmentation)
         );
         $response = $this->send($client, $request);
-        return json_decode($response->getContents());
+        return $response;
     }
 
     protected function getPath($path)
@@ -131,7 +131,19 @@ class Processor
     {
         try {
             $response = $client->send($request);
-            return $response->getBody();
+            $data = [
+                'body' => json_decode($response->getBody(), true),
+                'headers' => [],
+                'statusCode' => $response->getStatusCode()
+            ];
+
+            if(!empty($total = $response->getHeader('X-Total-Count'))) {
+                $data['headers']['X-Total-Count'] = $total;
+            }
+            if(!empty($rate = $response->getHeader('X-Ratelimit-Remaining'))) {
+                $data['headers']['X-Ratelimit-Remaining'] = $rate;
+            }
+            return $data;
         } catch (GuzzleClientException $e) {
             $message = $this->formatErrorMessage($e);
             throw new \Exception(json_encode($message), 0, $e);
