@@ -27,13 +27,20 @@ class Processor
         $this->endpoint = $endpoint;
     }
 
-    public function getAlerts($userId)
+    public function getAlerts($userId, $filter = [])
     {
         $client = new GuzzleClient();
+        $url = sprintf('/alerts?user=%s', $userId);
+        if (isset($filter['limit'])) {
+            $url .= '&$limit=' . $filter['limit'];
+        }
+        if (isset($filter['skip'])) {
+            $url .= '&$skip=' . $filter['skip'];
+        }
         $request = new Request(
             'get',
             $this->getPath(
-                sprintf('/alerts?user=%s', $userId)
+                $url
             )
         );
         $response = $this->send($client, $request);
@@ -132,15 +139,15 @@ class Processor
         try {
             $response = $client->send($request);
             $data = [
-                'body' => json_decode($response->getBody(), true),
-                'headers' => [],
+                'body'       => json_decode($response->getBody(), true),
+                'headers'    => [],
                 'statusCode' => $response->getStatusCode()
             ];
 
-            if(!empty($total = $response->getHeader('X-Total-Count'))) {
+            if (!empty($total = $response->getHeader('X-Total-Count'))) {
                 $data['headers']['X-Total-Count'] = $total;
             }
-            if(!empty($rate = $response->getHeader('X-Ratelimit-Remaining'))) {
+            if (!empty($rate = $response->getHeader('X-Ratelimit-Remaining'))) {
                 $data['headers']['X-Ratelimit-Remaining'] = $rate;
             }
             return $data;
@@ -158,7 +165,7 @@ class Processor
     protected function formatErrorMessage($httpException)
     {
         $message = [
-            'message'  => 'Something bad happened with statistic service',
+            'message'  => 'Something bad happened with alerts service',
             'request'  => [
                 'headers' => $httpException->getRequest()->getHeaders(),
                 'body'    => $httpException->getRequest()->getBody()
