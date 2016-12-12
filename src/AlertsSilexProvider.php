@@ -22,8 +22,10 @@ class AlertsSilexProvider implements ServiceProviderInterface
     {
         $app['hatch-is.alerts.processor'] = $app->share(
             function () use ($app) {
+                $filter = new Filter();
                 return new Processor(
-                    $app['hatch-is.alerts.endpoint']
+                    $app['hatch-is.alerts.endpoint'],
+                    $filter
                 );
             }
         );

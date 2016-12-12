@@ -16,7 +16,10 @@ class Processor
 {
     protected $endpoint;
 
-    public function __construct($endpoint)
+    /** @var  Filter */
+    protected $filter;
+
+    public function __construct($endpoint, $filter)
     {
         if (null === $endpoint) {
             throw new Exception(
@@ -24,6 +27,7 @@ class Processor
             );
         }
 
+        $this->filter = $filter;
         $this->endpoint = $endpoint;
     }
 
@@ -31,11 +35,9 @@ class Processor
     {
         $client = new GuzzleClient();
         $url = sprintf('/alerts?user=%s', $userId);
-        if (isset($filter['limit'])) {
-            $url .= '&$limit=' . $filter['limit'];
-        }
-        if (isset($filter['skip'])) {
-            $url .= '&$skip=' . $filter['skip'];
+        if(!empty($filter)) {
+            $parsedQuery = $this->filter->parse($filter);
+            $url .= '&' . http_build_query($parsedQuery);
         }
         $request = new Request(
             'get',
