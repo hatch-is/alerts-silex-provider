@@ -31,7 +31,7 @@ class Processor
         $this->endpoint = $endpoint;
     }
 
-    public function getAlerts($userId, $filter = [])
+    public function getAlerts($userId, $filter = [], $locationGroup)
     {
         $client = new GuzzleClient();
         $url = sprintf('/alerts?user=%s', $userId);
@@ -43,45 +43,60 @@ class Processor
             'get',
             $this->getPath(
                 $url
-            )
+            ),
+            [
+                'content-type' => 'application/json',
+                'x-location-group' => $locationGroup
+            ]
         );
         $response = $this->send($client, $request);
         return $response;
     }
 
-    public function getById($id)
+    public function getById($id, $locationGroup)
     {
         $client = new GuzzleClient();
         $request = new Request(
             'get',
             $this->getPath(
                 sprintf('/alerts/%s', $id)
-            )
+            ),
+            [
+                'content-type' => 'application/json',
+                'x-location-group' => $locationGroup
+            ]
         );
         $response = $this->send($client, $request);
         return $response;
     }
 
-    public function getUnread($userId)
+    public function getUnread($userId, $locationGroup)
     {
         $client = new GuzzleClient();
         $request = new Request(
             'get',
             $this->getPath(
                 sprintf('/alerts/unread?user=%s', $userId)
-            )
+            ),
+            [
+                'content-type' => 'application/json',
+                'x-location-group' => $locationGroup
+            ]
         );
         $response = $this->send($client, $request);
         return $response;
     }
 
-    public function markAlertsAsReadByDateTime($dateTime, $userId)
+    public function markAlertsAsReadByDateTime($dateTime, $userId, $locationGroup)
     {
         $client = new GuzzleClient();
         $request = new Request(
             'post',
             $this->getPath('/alerts/read/date'),
-            ['content-type' => 'application/json'],
+            [
+                'content-type' => 'application/json',
+                'x-location-group' => $locationGroup
+            ],
             json_encode(
                 [
                     'dateTime' => $dateTime,
@@ -93,13 +108,16 @@ class Processor
         return $response;
     }
 
-    public function markAlertsAsRead($alerts, $userId)
+    public function markAlertsAsRead($alerts, $userId, $locationGroup)
     {
         $client = new GuzzleClient();
         $request = new Request(
             'post',
             $this->getPath('/alerts/read'),
-            ['content-type' => 'application/json'],
+            [
+                'content-type' => 'application/json',
+                'x-location-group' => $locationGroup
+            ],
             json_encode(
                 [
                     'alerts' => $alerts,
@@ -111,13 +129,16 @@ class Processor
         return $response;
     }
 
-    public function getSegmentationCount($segmentation)
+    public function getSegmentationCount($segmentation, $locationGroup)
     {
         $client = new GuzzleClient();
         $request = new Request(
             'post',
             $this->getPath('/segments/count'),
-            ['content-type' => 'application/json'],
+            [
+                'content-type' => 'application/json',
+                'x-location-group' => $locationGroup
+            ],
             json_encode($segmentation)
         );
         $response = $this->send($client, $request);
